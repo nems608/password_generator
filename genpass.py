@@ -29,7 +29,7 @@ parser.add_argument('num_passwords', metavar='N', type=int,
 
 alpha = string.ascii_letters
 numbers = string.digits
-special = string.punctuation
+special = '!#$%&()*+-./:;<=>?@[]^_{}'
 
 def generate_wordlist(path, min_len, max_len):
     global wordlist
@@ -134,7 +134,7 @@ def calc_strength(format_str):
                 raise Exception('Improper format string: %s' % format_str)
             c += 2
     print('Strength: %d' % strength)
-    hash_speed = 10*10**9
+    hash_speed = 50*10**9
     crack_sec = strength / hash_speed
     t = str(datetime.timedelta(seconds=crack_sec))
     print('Time to crack: %s\n' % t)
