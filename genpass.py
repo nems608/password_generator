@@ -2,6 +2,7 @@
 import argparse
 import string
 import random
+import datetime
 
 parser = argparse.ArgumentParser(
                     description='Generate easy to remember, random passwords',
@@ -26,6 +27,10 @@ parser.add_argument('format_str', type=str,
 parser.add_argument('num_passwords', metavar='N', type=int,
                     help='The number of passwords to generate')
 
+alpha = string.ascii_letters
+numbers = string.digits
+special = string.punctuation
+
 def generate_wordlist(path, min_len, max_len):
     global wordlist
     if path is None:
@@ -41,16 +46,14 @@ def generate_wordlist(path, min_len, max_len):
             wordlist.append(word)
 
 def random_alpha():
-    charset = string.ascii_letters
-    return random.choice(charset)
+    return random.choice(alpha)
 
 def random_number():
     charset = string.digits
-    return random.choice(charset)
+    return random.choice(numbers)
 
 def random_special():
-    charset = string.punctuation
-    return random.choice(charset)
+    return random.choice(special)
 
 def random_word(titlecase):
     if wordlist is None:
@@ -109,9 +112,38 @@ def output_passwords(passwords, rows):
     for line in output:
         print(line)
 
+def calc_strength(format_str):
+    strength = 1
+    c = 0
+    while c < len(format_str):
+        if format_str[c] != '%':
+            c += 1
+        else:
+            if format_str[c+1] == 'a':
+                strength *= len(alpha)
+            elif format_str[c+1] == 'n':
+                strength *= len(numbers)
+            elif format_str[c+1] in ['w', 'W']:
+                strength *= len(wordlist)
+            elif format_str[c+1] == 's':
+                strength *= len(special)
+            elif format_str[c+1] == '%':
+                pass
+            else:
+                print(format_str[c:c+2])
+                raise Exception('Improper format string: %s' % format_str)
+            c += 2
+    print('Strength: %d' % strength)
+    hash_speed = 10*10**9
+    crack_sec = strength / hash_speed
+    t = str(datetime.timedelta(seconds=crack_sec))
+    print('Time to crack: %s\n' % t)
+
+
 if __name__ == '__main__':
     args = parser.parse_args()
 
     generate_wordlist(args.w, args.min_word_length, args.max_word_length)
+    calc_strength(args.format_str)
     passwords = generate_passwords(args.format_str, args.num_passwords)
     output_passwords(passwords, args.csv)
