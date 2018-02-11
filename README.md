@@ -4,6 +4,7 @@ usage: genpass.py [-h] [-w wordlist] [--csv rows] [--min-word-length min_len]
 
 Generate easy to remember, random passwords
 
+```
 positional arguments:
   format_str            Format string for generating passwords.
                         %a: Alpha character
@@ -23,3 +24,4 @@ optional arguments:
                         Minimum length of words to use
   --max-word-length min_len
                         Maximum length of words to use
+```
